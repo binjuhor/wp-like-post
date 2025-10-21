@@ -5,11 +5,15 @@ A comprehensive like system for WordPress posts with AJAX functionality, databas
 ## Features
 
 - **AJAX Like Button**: Modern, animated like button with real-time updates
+- **Shortcode Support**: Easy integration with `[wplp_like_button]` shortcode
 - **Database Storage**: Custom database table to store all like data
 - **User Tracking**: Supports both logged-in users and guests
 - **Rate Limiting**: 60-second cooldown per user/IP per post
 - **Duplicate Prevention**: One like per user (or IP for guests) per post
-- **Email Notifications**: Admin receives email notification for each like
+- **Email Notifications**: Configurable email notifications for each like
+- **Settings Page**: Admin interface to configure notification email
+- **Statistics Dashboard**: View like statistics and top posts
+- **Translation Ready**: Fully translatable with Japanese translations included
 - **Beautiful UI**: Gradient design with smooth animations
 - **Responsive Design**: Mobile-friendly interface
 - **Security**: AJAX nonce verification and data sanitization
@@ -65,6 +69,49 @@ Or for a specific post:
 </article>
 ```
 
+### Using Shortcode
+
+You can also use the shortcode anywhere in your content, widgets, or page builders:
+
+**Basic usage (current post):**
+
+```
+[wplp_like_button]
+```
+
+**For a specific post:**
+
+```
+[wplp_like_button post_id="123"]
+```
+
+**Examples:**
+
+In post/page content:
+```
+Here is my post content...
+
+[wplp_like_button]
+
+Thanks for reading!
+```
+
+In a widget (Text widget or Custom HTML widget):
+```
+<h3>Like this post?</h3>
+[wplp_like_button post_id="456"]
+```
+
+In page builders (Elementor, WPBakery, etc.):
+```
+[wplp_like_button]
+```
+
+Show like button for post ID 789:
+```
+[wplp_like_button post_id="789"]
+```
+
 ## Database Structure
 
 The plugin creates a custom table `{prefix}_post_likes` with the following fields:
@@ -82,13 +129,34 @@ The plugin creates a custom table `{prefix}_post_likes` with the following field
 
 The table has a unique constraint on `(post_id, user_id, ip_address)` to prevent duplicate likes.
 
-## Configuration
+## Settings
 
-You can modify the following constants in `like-system.php`:
+Navigate to **Settings > Like System** in your WordPress admin to configure the plugin.
+
+### Email Notifications
+
+Configure the email address that receives like notifications:
+
+1. Go to **Settings > Like System**
+2. Enter your desired notification email address
+3. Click "Save Settings"
+
+By default, it uses the WordPress admin email address.
+
+### Statistics Dashboard
+
+The settings page also displays:
+- Total number of likes
+- Number of liked posts
+- Registered user likes vs guest likes
+- Top 10 most liked posts with links to edit
+
+### Advanced Configuration
+
+You can modify the rate limit in the plugin file:
 
 ```php
-define('WPLP_MAIL_TO', get_option('admin_email'));      // Email recipient
-define('WPLP_RATE_LIMIT_SECONDS', 60);                  // Rate limit in seconds
+define('WPLP_RATE_LIMIT_SECONDS', 60);  // Rate limit in seconds (default: 60)
 ```
 
 ## API Endpoints
@@ -228,6 +296,60 @@ Time: 2025-10-21 14:30:00
 - Safari (latest)
 - Edge (latest)
 - Mobile browsers
+
+## Translation
+
+The plugin is fully translatable and includes Japanese translations out of the box.
+
+### Included Languages
+
+- English (default)
+- Japanese (日本語)
+
+### Using Translations
+
+The plugin will automatically load the appropriate translation based on your WordPress language settings:
+
+1. Go to **Settings > General** in WordPress admin
+2. Set **Site Language** to your preferred language
+3. The plugin interface will automatically update
+
+### Adding New Translations
+
+To translate the plugin to your language:
+
+1. **Using Poedit or Loco Translate:**
+   - Install [Poedit](https://poedit.net/) (desktop app) or [Loco Translate](https://wordpress.org/plugins/loco-translate/) (WordPress plugin)
+   - Open the template file: `languages/like-system.pot`
+   - Translate all strings
+   - Save as `like-system-{locale}.po` (e.g., `like-system-fr_FR.po` for French)
+   - The `.mo` file will be generated automatically
+
+2. **Using WP-CLI:**
+   ```bash
+   wp i18n make-pot . languages/like-system.pot
+   wp i18n make-mo languages/
+   ```
+
+3. **Place translation files:**
+   - Copy your `.po` and `.mo` files to `/wp-content/plugins/wp-like-post/languages/`
+   - Or use the `/wp-content/languages/plugins/` directory for site-wide translations
+
+### Available Strings
+
+All user-facing strings are translatable including:
+- Button labels ("Like", "Liked")
+- Admin settings interface
+- Email notification content
+- Error messages
+- Statistics dashboard
+
+### Contributing Translations
+
+If you'd like to contribute a translation:
+1. Create your translation files using the `.pot` template
+2. Submit a pull request or create an issue on GitHub
+3. Your translation will be included in future releases
 
 ## Troubleshooting
 

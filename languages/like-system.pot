@@ -1,0 +1,159 @@
+# Copyright (C) 2025 Like System
+# This file is distributed under the same license as the Like System plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Like System 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/like-system\n"
+"POT-Creation-Date: 2025-01-20 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: WordPress\n"
+
+#: wp-like-post.php:93
+msgid "Email Notifications"
+msgstr ""
+
+#: wp-like-post.php:100
+msgid "Notification Email"
+msgstr ""
+
+#: wp-like-post.php:120
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: wp-like-post.php:135
+msgid "Configure email notifications for new likes."
+msgstr ""
+
+#: wp-like-post.php:149
+msgid "Email address to receive like notifications. Defaults to WordPress admin email."
+msgstr ""
+
+#: wp-like-post.php:158
+msgid "Like System Settings"
+msgstr ""
+
+#: wp-like-post.php:159
+msgid "Like System"
+msgstr ""
+
+#: wp-like-post.php:181
+msgid "Settings saved successfully!"
+msgstr ""
+
+#: wp-like-post.php:194
+msgid "Save Settings"
+msgstr ""
+
+#: wp-like-post.php:199
+msgid "Statistics"
+msgstr ""
+
+#: wp-like-post.php:222
+msgid "Total Likes"
+msgstr ""
+
+#: wp-like-post.php:223
+msgid "Liked Posts"
+msgstr ""
+
+#: wp-like-post.php:224
+msgid "Registered User Likes"
+msgstr ""
+
+#: wp-like-post.php:225
+msgid "Guest Likes"
+msgstr ""
+
+#: wp-like-post.php:238
+msgid "Top 10 Most Liked Posts"
+msgstr ""
+
+#: wp-like-post.php:240
+msgid "Post"
+msgstr ""
+
+#: wp-like-post.php:240
+msgid "Likes"
+msgstr ""
+
+#: wp-like-post.php:365
+msgid "Invalid post"
+msgstr ""
+
+#: wp-like-post.php:375
+msgid "Please wait before liking again"
+msgstr ""
+
+#: wp-like-post.php:381
+msgid "You have already liked this post"
+msgstr ""
+
+#: wp-like-post.php:400
+msgid "Failed to save like"
+msgstr ""
+
+#: wp-like-post.php:410
+msgid "User: %1$s (ID: %2$d)"
+msgstr ""
+
+#: wp-like-post.php:411
+msgid "Guest (IP: %s)"
+msgstr ""
+
+#: wp-like-post.php:413
+msgid "[%1$s] New Like: %2$s"
+msgstr ""
+
+#: wp-like-post.php:414
+msgid "A post has just been liked!"
+msgstr ""
+
+#: wp-like-post.php:415
+msgid "Title: %s"
+msgstr ""
+
+#: wp-like-post.php:416
+msgid "URL: %s"
+msgstr ""
+
+#: wp-like-post.php:417
+msgid "Total likes: %d"
+msgstr ""
+
+#: wp-like-post.php:419
+msgid "Time: %s"
+msgstr ""
+
+#: wp-like-post.php:426
+msgid "Liked successfully"
+msgstr ""
+
+#: wp-like-post.php:445
+msgid "Invalid post"
+msgstr ""
+
+#: wp-like-post.php:466
+msgid "Liked"
+msgstr ""
+
+#: wp-like-post.php:466
+msgid "Like"
+msgstr ""
+
+#: wp-like-post.php:490
+msgid "Invalid post ID"
+msgstr ""
+
+#: wp-like-post.php:496
+msgid "Liked"
+msgstr ""
+
+#: wp-like-post.php:496
+msgid "Like"
+msgstr ""
