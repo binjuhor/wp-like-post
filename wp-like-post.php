@@ -490,7 +490,7 @@ function wplp_render_like_button($user_id = null)
     $button_text = $has_liked ? __('Liked', 'wplp') : __('Like', 'wplp');
 
     echo sprintf(
-        '<button class="%s" data-user-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></button>',
+        '<a class="%s" data-user-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></a>',
         esc_attr($button_class),
         esc_attr($user_id),
         esc_html($button_text),
