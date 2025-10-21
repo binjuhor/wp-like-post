@@ -26,7 +26,7 @@ A comprehensive like system for WordPress posts with AJAX functionality, databas
 
 ## Installation
 
-1. Upload the `like-system` folder to `/wp-content/plugins/`
+1. Upload the `wp-like-post` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. The database table will be created automatically on activation
 
@@ -320,14 +320,14 @@ To translate the plugin to your language:
 
 1. **Using Poedit or Loco Translate:**
    - Install [Poedit](https://poedit.net/) (desktop app) or [Loco Translate](https://wordpress.org/plugins/loco-translate/) (WordPress plugin)
-   - Open the template file: `languages/like-system.pot`
+   - Open the template file: `languages/wplp.pot`
    - Translate all strings
-   - Save as `like-system-{locale}.po` (e.g., `like-system-fr_FR.po` for French)
+   - Save as `wplp-{locale}.po` (e.g., `wplp-fr_FR.po` for French)
    - The `.mo` file will be generated automatically
 
 2. **Using WP-CLI:**
    ```bash
-   wp i18n make-pot . languages/like-system.pot
+   wp i18n make-pot . languages/wplp.pot
    wp i18n make-mo languages/
    ```
 
@@ -383,7 +383,7 @@ GPL v2 or later - https://www.gnu.org/licenses/gpl-2.0.html
 
 ## Support
 
-For bug reports and feature requests, please use the [GitHub repository](https://github.com/binjuhor/like-system).
+For bug reports and feature requests, please use the [GitHub repository](https://github.com/binjuhor/wp-like-post).
 
 ## Changelog
 

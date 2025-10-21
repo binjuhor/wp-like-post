@@ -4,9 +4,9 @@ This directory contains translation files for the Like System plugin.
 
 ## Files
 
-- **like-system.pot**: Template file for creating new translations
-- **like-system-ja.po**: Japanese translation source file
-- **like-system-ja.mo**: Japanese compiled translation (binary file)
+- **wplp.pot**: Template file for creating new translations
+- **wplp-ja.po**: Japanese translation source file
+- **wplp-ja.mo**: Japanese compiled translation (binary file)
 
 ## How to Compile .mo Files
 
@@ -29,7 +29,7 @@ cd /path/to/wp-content/plugins/wp-like-post
 wp i18n make-mo languages/
 
 # Or compile a specific file
-msgfmt languages/like-system-ja.po -o languages/like-system-ja.mo
+msgfmt languages/wplp-ja.po -o languages/wplp-ja.mo
 ```
 
 ### Method 3: Using Loco Translate (WordPress Plugin)
@@ -51,7 +51,7 @@ brew install gettext
 sudo apt-get install gettext
 
 # Compile the .po file
-msgfmt -o languages/like-system-ja.mo languages/like-system-ja.po
+msgfmt -o languages/wplp-ja.mo languages/wplp-ja.po
 ```
 
 ## Creating New Translations
@@ -60,7 +60,7 @@ To create a translation for a new language:
 
 1. **Copy the template:**
    ```bash
-   cp like-system.pot like-system-{locale}.po
+   cp wplp.pot wplp-{locale}.po
    ```
    Replace `{locale}` with your language code (e.g., `fr_FR`, `de_DE`, `es_ES`)
 
@@ -114,5 +114,5 @@ If you create a translation, please consider contributing it:
 ## Support
 
 For translation issues or questions:
-- GitHub: https://github.com/binjuhor/like-system
-- WordPress Support: https://wordpress.org/support/plugin/like-system
+- GitHub: https://github.com/binjuhor/wplp
+- WordPress Support: https://wordpress.org/support/plugin/wplp

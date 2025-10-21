@@ -10,7 +10,7 @@
  * Author URI:        https://github.com/binjuhor
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       like-system
+ * Text Domain:       wplp
  * Domain Path:       /languages
  *
  * @package LikeSystem
@@ -32,7 +32,7 @@ define('WPLP_PLUGIN_URL', plugin_dir_url(__FILE__));
 function wplp_load_textdomain()
 {
     load_plugin_textdomain(
-        'like-system',
+        'wplp',
         false,
         dirname(plugin_basename(__FILE__)) . '/languages'
     );
@@ -104,14 +104,14 @@ function wplp_register_settings()
 
     add_settings_section(
         'wplp_email_section',
-        __('Email Notifications', 'like-system'),
+        __('Email Notifications', 'wplp'),
         'wplp_email_section_callback',
         'wplp-settings'
     );
 
     add_settings_field(
         'wplp_notification_email',
-        __('Notification Email', 'like-system'),
+        __('Notification Email', 'wplp'),
         'wplp_notification_email_callback',
         'wplp-settings',
         'wplp_email_section'
@@ -131,7 +131,7 @@ function wplp_sanitize_email_setting($email)
         add_settings_error(
             'wplp_notification_email',
             'invalid_email',
-            __('Please enter a valid email address.', 'like-system'),
+            __('Please enter a valid email address.', 'wplp'),
             'error'
         );
 
@@ -146,7 +146,7 @@ function wplp_sanitize_email_setting($email)
  */
 function wplp_email_section_callback()
 {
-    echo '<p>' . esc_html__('Configure email notifications for new likes.', 'like-system') . '</p>';
+    echo '<p>' . esc_html__('Configure email notifications for new likes.', 'wplp') . '</p>';
 }
 
 /**
@@ -160,7 +160,7 @@ function wplp_notification_email_callback()
         '<input type="email" name="wplp_notification_email" value="%s" class="regular-text" required />',
         esc_attr($email)
     );
-    echo '<p class="description">' . esc_html__('Email address to receive like notifications. Defaults to WordPress admin email.', 'like-system') . '</p>';
+    echo '<p class="description">' . esc_html__('Email address to receive like notifications. Defaults to WordPress admin email.', 'wplp') . '</p>';
 }
 
 /**
@@ -169,8 +169,8 @@ function wplp_notification_email_callback()
 function wplp_add_admin_menu()
 {
     add_options_page(
-        __('Like System Settings', 'like-system'),
-        __('Like System', 'like-system'),
+        __('Like System Settings', 'wplp'),
+        __('Like System', 'wplp'),
         'manage_options',
         'wplp-settings',
         'wplp_settings_page'
@@ -192,7 +192,7 @@ function wplp_settings_page()
         add_settings_error(
             'wplp_messages',
             'wplp_message',
-            __('Settings saved successfully!', 'like-system'),
+            __('Settings saved successfully!', 'wplp'),
             'success'
         );
     }
@@ -205,12 +205,12 @@ function wplp_settings_page()
             <?php
             settings_fields('wplp_settings_group');
             do_settings_sections('wplp-settings');
-            submit_button(__('Save Settings', 'like-system'));
+            submit_button(__('Save Settings', 'wplp'));
             ?>
         </form>
 
         <div class="wplp-stats" style="margin-top: 30px; padding: 20px; background: #fff; border: 1px solid #ccd0d4; border-radius: 4px;">
-            <h2><?php esc_html_e('Statistics', 'like-system'); ?></h2>
+            <h2><?php esc_html_e('Statistics', 'wplp'); ?></h2>
             <?php wplp_display_statistics(); ?>
         </div>
     </div>
@@ -233,10 +233,10 @@ function wplp_display_statistics()
 
     echo '<table class="widefat striped">';
     echo '<tbody>';
-    echo '<tr><td><strong>' . esc_html__('Total Likes', 'like-system') . '</strong></td><td>' . number_format($total_likes) . '</td></tr>';
-    echo '<tr><td><strong>' . esc_html__('Liked Posts', 'like-system') . '</strong></td><td>' . number_format($total_posts) . '</td></tr>';
-    echo '<tr><td><strong>' . esc_html__('Registered User Likes', 'like-system') . '</strong></td><td>' . number_format($total_users) . '</td></tr>';
-    echo '<tr><td><strong>' . esc_html__('Guest Likes', 'like-system') . '</strong></td><td>' . number_format($total_guests) . '</td></tr>';
+    echo '<tr><td><strong>' . esc_html__('Total Likes', 'wplp') . '</strong></td><td>' . number_format($total_likes) . '</td></tr>';
+    echo '<tr><td><strong>' . esc_html__('Liked Posts', 'wplp') . '</strong></td><td>' . number_format($total_posts) . '</td></tr>';
+    echo '<tr><td><strong>' . esc_html__('Registered User Likes', 'wplp') . '</strong></td><td>' . number_format($total_users) . '</td></tr>';
+    echo '<tr><td><strong>' . esc_html__('Guest Likes', 'wplp') . '</strong></td><td>' . number_format($total_guests) . '</td></tr>';
     echo '</tbody>';
     echo '</table>';
 
@@ -249,9 +249,9 @@ function wplp_display_statistics()
     );
 
     if ($top_posts) {
-        echo '<h3 style="margin-top: 20px;">' . esc_html__('Top 10 Most Liked Posts', 'like-system') . '</h3>';
+        echo '<h3 style="margin-top: 20px;">' . esc_html__('Top 10 Most Liked Posts', 'wplp') . '</h3>';
         echo '<table class="widefat striped">';
-        echo '<thead><tr><th>' . esc_html__('Post', 'like-system') . '</th><th>' . esc_html__('Likes', 'like-system') . '</th></tr></thead>';
+        echo '<thead><tr><th>' . esc_html__('Post', 'wplp') . '</th><th>' . esc_html__('Likes', 'wplp') . '</th></tr></thead>';
         echo '<tbody>';
 
         foreach ($top_posts as $post) {
@@ -376,7 +376,7 @@ function wplp_send_like_handler()
     $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
     if ($post_id <= 0 || get_post_status($post_id) === false) {
-        wp_send_json_error(['message' => __('Invalid post', 'like-system')], 400);
+        wp_send_json_error(['message' => __('Invalid post', 'wplp')], 400);
     }
 
     $user_id = get_current_user_id();
@@ -386,13 +386,13 @@ function wplp_send_like_handler()
     $key = "wplp_rl_{$user_id}_{$ip}_{$post_id}";
 
     if (get_transient($key)) {
-        wp_send_json_error(['message' => __('Please wait before liking again', 'like-system')], 429);
+        wp_send_json_error(['message' => __('Please wait before liking again', 'wplp')], 429);
     }
 
     set_transient($key, 1, WPLP_RATE_LIMIT_SECONDS);
 
     if (wplp_has_user_liked($post_id)) {
-        wp_send_json_error(['message' => __('You have already liked this post', 'like-system')], 403);
+        wp_send_json_error(['message' => __('You have already liked this post', 'wplp')], 403);
     }
 
     global $wpdb;
@@ -411,7 +411,7 @@ function wplp_send_like_handler()
     );
 
     if (! $inserted) {
-        wp_send_json_error(['message' => __('Failed to save like', 'like-system')], 500);
+        wp_send_json_error(['message' => __('Failed to save like', 'wplp')], 500);
     }
 
     $total_likes = wplp_get_like_count($post_id);
@@ -421,23 +421,23 @@ function wplp_send_like_handler()
     $site_name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
 
     $user_info = $user_id > 0
-        ? sprintf(__('User: %1$s (ID: %2$d)', 'like-system'), wp_get_current_user()->display_name, $user_id)
-        : sprintf(__('Guest (IP: %s)', 'like-system'), $ip);
+        ? sprintf(__('User: %1$s (ID: %2$d)', 'wplp'), wp_get_current_user()->display_name, $user_id)
+        : sprintf(__('Guest (IP: %s)', 'wplp'), $ip);
 
-    $subject = sprintf(__('[%1$s] New Like: %2$s', 'like-system'), $site_name, $title);
-    $body = __('A post has just been liked!', 'like-system') . "\n\n"
-          . sprintf(__('Title: %s', 'like-system'), $title) . "\n"
-          . sprintf(__('URL: %s', 'like-system'), $permalink) . "\n"
-          . sprintf(__('Total likes: %d', 'like-system'), $total_likes) . "\n"
+    $subject = sprintf(__('[%1$s] New Like: %2$s', 'wplp'), $site_name, $title);
+    $body = __('A post has just been liked!', 'wplp') . "\n\n"
+          . sprintf(__('Title: %s', 'wplp'), $title) . "\n"
+          . sprintf(__('URL: %s', 'wplp'), $permalink) . "\n"
+          . sprintf(__('Total likes: %d', 'wplp'), $total_likes) . "\n"
           . $user_info . "\n"
-          . sprintf(__('Time: %s', 'like-system'), wp_date('Y-m-d H:i:s')) . "\n";
+          . sprintf(__('Time: %s', 'wplp'), wp_date('Y-m-d H:i:s')) . "\n";
 
     $headers = ["From: {$site_name} <no-reply@" . parse_url(home_url(), PHP_URL_HOST) . '>'];
 
     wp_mail(wplp_get_notification_email(), $subject, $body, $headers);
 
     wp_send_json_success([
-        'message' => __('Liked successfully', 'like-system'),
+        'message' => __('Liked successfully', 'wplp'),
         'likes' => $total_likes,
         'has_liked' => true,
     ]);
@@ -456,7 +456,7 @@ function wplp_get_like_status_handler()
     $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
     if ($post_id <= 0) {
-        wp_send_json_error(['message' => __('Invalid post', 'like-system')], 400);
+        wp_send_json_error(['message' => __('Invalid post', 'wplp')], 400);
     }
 
     wp_send_json_success([
@@ -477,7 +477,7 @@ function wplp_render_like_button($post_id = null)
     $likes = wplp_get_like_count($post_id);
     $has_liked = wplp_has_user_liked($post_id);
     $button_class = $has_liked ? 'wplp-like wplp-liked' : 'wplp-like';
-    $button_text = $has_liked ? __('Liked', 'like-system') : __('Like', 'like-system');
+    $button_text = $has_liked ? __('Liked', 'wplp') : __('Like', 'wplp');
 
     echo sprintf(
         '<button class="%s" data-post-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></button>',
@@ -501,13 +501,13 @@ function wplp_like_button_shortcode($atts)
     $post_id = ! empty($atts['post_id']) ? intval($atts['post_id']) : get_the_ID();
 
     if (! $post_id || get_post_status($post_id) === false) {
-        return '<p class="wplp-error">' . esc_html__('Invalid post ID', 'like-system') . '</p>';
+        return '<p class="wplp-error">' . esc_html__('Invalid post ID', 'wplp') . '</p>';
     }
 
     $likes = wplp_get_like_count($post_id);
     $has_liked = wplp_has_user_liked($post_id);
     $button_class = $has_liked ? 'wplp-like wplp-liked' : 'wplp-like';
-    $button_text = $has_liked ? __('Liked', 'like-system') : __('Like', 'like-system');
+    $button_text = $has_liked ? __('Liked', 'wplp') : __('Like', 'wplp');
 
     return sprintf(
         '<button class="%s" data-post-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></button>',
