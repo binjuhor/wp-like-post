@@ -519,3 +519,7 @@ function wplp_like_button_shortcode($atts)
 }
 
 add_shortcode('wplp_like_button', 'wplp_like_button_shortcode');
+
+add_action( 'um_members_after_user_name', function($user_id, $args){
+    wplp_render_like_button();
+}, 10, 2 );
