@@ -58,6 +58,7 @@
 
 .wplp-like-text {
     font-weight: 600;
+    color: #ffffff;
 }
 
 .wplp-like-count {
@@ -68,10 +69,11 @@
     font-weight: 700;
     min-width: 30px;
     text-align: center;
+    color: #ffffff;
 }
 
 .wplp-like.wplp-loading .wplp-like-icon {
-    animation: rotate 1s linear infinite;
+    animation: heartBeat 0.8s ease-in-out infinite;
 }
 
 /**
