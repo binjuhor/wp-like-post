@@ -47,22 +47,22 @@ function wplp_create_likes_table()
 {
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'post_likes';
+    $table_name = $wpdb->prefix . 'user_likes';
     $charset_collate = $wpdb->get_charset_collate();
 
     $sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
         id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-        post_id bigint(20) unsigned NOT NULL,
-        user_id bigint(20) unsigned DEFAULT NULL,
+        liked_user_id bigint(20) unsigned NOT NULL,
+        liker_user_id bigint(20) unsigned DEFAULT NULL,
         ip_address varchar(45) NOT NULL,
         user_agent varchar(255) DEFAULT NULL,
         created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id),
-        KEY post_id (post_id),
-        KEY user_id (user_id),
+        KEY liked_user_id (liked_user_id),
+        KEY liker_user_id (liker_user_id),
         KEY ip_address (ip_address),
         KEY created_at (created_at),
-        UNIQUE KEY unique_like (post_id, user_id, ip_address)
+        UNIQUE KEY unique_like (liked_user_id, liker_user_id, ip_address)
     ) {$charset_collate};";
 
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -224,43 +224,48 @@ function wplp_display_statistics()
 {
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'post_likes';
+    $table_name = $wpdb->prefix . 'user_likes';
 
     $total_likes = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name}");
-    $total_users = $wpdb->get_var("SELECT COUNT(DISTINCT user_id) FROM {$table_name} WHERE user_id IS NOT NULL");
-    $total_guests = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} WHERE user_id IS NULL");
-    $total_posts = $wpdb->get_var("SELECT COUNT(DISTINCT post_id) FROM {$table_name}");
+    $total_likers = $wpdb->get_var("SELECT COUNT(DISTINCT liker_user_id) FROM {$table_name} WHERE liker_user_id IS NOT NULL");
+    $total_guests = $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} WHERE liker_user_id IS NULL");
+    $total_liked_users = $wpdb->get_var("SELECT COUNT(DISTINCT liked_user_id) FROM {$table_name}");
 
     echo '<table class="widefat striped">';
     echo '<tbody>';
     echo '<tr><td><strong>' . esc_html__('Total Likes', 'wplp') . '</strong></td><td>' . number_format($total_likes) . '</td></tr>';
-    echo '<tr><td><strong>' . esc_html__('Liked Posts', 'wplp') . '</strong></td><td>' . number_format($total_posts) . '</td></tr>';
-    echo '<tr><td><strong>' . esc_html__('Registered User Likes', 'wplp') . '</strong></td><td>' . number_format($total_users) . '</td></tr>';
+    echo '<tr><td><strong>' . esc_html__('Liked Users', 'wplp') . '</strong></td><td>' . number_format($total_liked_users) . '</td></tr>';
+    echo '<tr><td><strong>' . esc_html__('Registered Likers', 'wplp') . '</strong></td><td>' . number_format($total_likers) . '</td></tr>';
     echo '<tr><td><strong>' . esc_html__('Guest Likes', 'wplp') . '</strong></td><td>' . number_format($total_guests) . '</td></tr>';
     echo '</tbody>';
     echo '</table>';
 
-    $top_posts = $wpdb->get_results(
-        "SELECT post_id, COUNT(*) as like_count
+    $top_users = $wpdb->get_results(
+        "SELECT liked_user_id, COUNT(*) as like_count
          FROM {$table_name}
-         GROUP BY post_id
+         GROUP BY liked_user_id
          ORDER BY like_count DESC
          LIMIT 10"
     );
 
-    if ($top_posts) {
-        echo '<h3 style="margin-top: 20px;">' . esc_html__('Top 10 Most Liked Posts', 'wplp') . '</h3>';
+    if ($top_users) {
+        echo '<h3 style="margin-top: 20px;">' . esc_html__('Top 10 Most Liked Users', 'wplp') . '</h3>';
         echo '<table class="widefat striped">';
-        echo '<thead><tr><th>' . esc_html__('Post', 'wplp') . '</th><th>' . esc_html__('Likes', 'wplp') . '</th></tr></thead>';
+        echo '<thead><tr><th>' . esc_html__('User', 'wplp') . '</th><th>' . esc_html__('Likes', 'wplp') . '</th></tr></thead>';
         echo '<tbody>';
 
-        foreach ($top_posts as $post) {
-            $post_title = get_the_title($post->post_id);
-            $post_link = get_edit_post_link($post->post_id);
+        foreach ($top_users as $user) {
+            $user_data = get_userdata($user->liked_user_id);
+            if (! $user_data) {
+                continue;
+            }
+
+            $user_name = $user_data->display_name;
+            $user_link = get_edit_user_link($user->liked_user_id);
 
             echo '<tr>';
-            echo '<td><a href="' . esc_url($post_link) . '">' . esc_html($post_title) . '</a></td>';
-            echo '<td>' . number_format($post->like_count) . '</td>';
+            echo '<td><a href="' . esc_url($user_link) . '">' . esc_html($user_name) . '</a></td>';
+            echo '<td>' . number_format($user->like_count) . '</td>';
             echo '</tr>';
         }
 
@@ -319,26 +324,26 @@ function wplp_get_user_ip()
 }
 
 /**
- * Helper: Check if user has already liked the post
+ * Helper: Check if current user has already liked the target user
  */
-function wplp_has_user_liked($post_id)
+function wplp_has_user_liked($liked_user_id)
 {
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'post_likes';
-    $user_id = get_current_user_id();
+    $table_name = $wpdb->prefix . 'user_likes';
+    $liker_user_id = get_current_user_id();
     $ip = wplp_get_user_ip();
 
-    if ($user_id > 0) {
+    if ($liker_user_id > 0) {
         $exists = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d AND user_id = %d",
-            $post_id,
-            $user_id
+            "SELECT COUNT(*) FROM {$table_name} WHERE liked_user_id = %d AND liker_user_id = %d",
+            $liked_user_id,
+            $liker_user_id
         ));
     } else {
         $exists = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d AND ip_address = %s AND user_id IS NULL",
-            $post_id,
+            "SELECT COUNT(*) FROM {$table_name} WHERE liked_user_id = %d AND ip_address = %s AND liker_user_id IS NULL",
+            $liked_user_id,
             $ip
         ));
     }
@@ -347,17 +352,17 @@ function wplp_has_user_liked($post_id)
 }
 
 /**
- * Helper: Get like count for a post
+ * Helper: Get like count for a user
  */
-function wplp_get_like_count($post_id)
+function wplp_get_like_count($liked_user_id)
 {
     global $wpdb;
 
-    $table_name = $wpdb->prefix . 'post_likes';
+    $table_name = $wpdb->prefix . 'user_likes';
 
     $count = $wpdb->get_var($wpdb->prepare(
-        "SELECT COUNT(*) FROM {$table_name} WHERE post_id = %d",
-        $post_id
+        "SELECT COUNT(*) FROM {$table_name} WHERE liked_user_id = %d",
+        $liked_user_id
     ));
 
     return (int) $count;
@@ -373,17 +378,18 @@ function wplp_send_like_handler()
 {
     check_ajax_referer('wplp_like_nonce', 'nonce');
 
-    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $liked_user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
 
-    if ($post_id <= 0 || get_post_status($post_id) === false) {
-        wp_send_json_error(['message' => __('Invalid post', 'wplp')], 400);
+    $user_data = get_userdata($liked_user_id);
+    if (! $user_data) {
+        wp_send_json_error(['message' => __('Invalid user', 'wplp')], 400);
     }
 
-    $user_id = get_current_user_id();
+    $liker_user_id = get_current_user_id();
     $ip = wplp_get_user_ip();
     $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : '';
 
-    $key = "wplp_rl_{$user_id}_{$ip}_{$post_id}";
+    $key = "wplp_rl_{$liker_user_id}_{$ip}_{$liked_user_id}";
 
     if (get_transient($key)) {
         wp_send_json_error(['message' => __('Please wait before liking again', 'wplp')], 429);
@@ -391,18 +397,18 @@ function wplp_send_like_handler()
 
     set_transient($key, 1, WPLP_RATE_LIMIT_SECONDS);
 
-    if (wplp_has_user_liked($post_id)) {
-        wp_send_json_error(['message' => __('You have already liked this post', 'wplp')], 403);
+    if (wplp_has_user_liked($liked_user_id)) {
+        wp_send_json_error(['message' => __('You have already liked this user', 'wplp')], 403);
     }
 
     global $wpdb;
-    $table_name = $wpdb->prefix . 'post_likes';
+    $table_name = $wpdb->prefix . 'user_likes';
 
     $inserted = $wpdb->insert(
         $table_name,
         [
-            'post_id' => $post_id,
-            'user_id' => $user_id > 0 ? $user_id : null,
+            'liked_user_id' => $liked_user_id,
+            'liker_user_id' => $liker_user_id > 0 ? $liker_user_id : null,
             'ip_address' => $ip,
             'user_agent' => $user_agent,
             'created_at' => current_time('mysql'),
@@ -414,22 +420,22 @@ function wplp_send_like_handler()
         wp_send_json_error(['message' => __('Failed to save like', 'wplp')], 500);
     }
 
-    $total_likes = wplp_get_like_count($post_id);
+    $total_likes = wplp_get_like_count($liked_user_id);
 
-    $title = get_the_title($post_id);
-    $permalink = get_permalink($post_id);
+    $liked_user_name = $user_data->display_name;
+    $liked_user_profile = get_author_posts_url($liked_user_id);
     $site_name = wp_specialchars_decode(get_bloginfo('name'), ENT_QUOTES);
 
-    $user_info = $user_id > 0
-        ? sprintf(__('User: %1$s (ID: %2$d)', 'wplp'), wp_get_current_user()->display_name, $user_id)
+    $liker_info = $liker_user_id > 0
+        ? sprintf(__('Liker: %1$s (ID: %2$d)', 'wplp'), wp_get_current_user()->display_name, $liker_user_id)
         : sprintf(__('Guest (IP: %s)', 'wplp'), $ip);
 
-    $subject = sprintf(__('[%1$s] New Like: %2$s', 'wplp'), $site_name, $title);
-    $body = __('A post has just been liked!', 'wplp') . "\n\n"
-          . sprintf(__('Title: %s', 'wplp'), $title) . "\n"
-          . sprintf(__('URL: %s', 'wplp'), $permalink) . "\n"
+    $subject = sprintf(__('[%1$s] New Like: %2$s', 'wplp'), $site_name, $liked_user_name);
+    $body = __('A user has just been liked!', 'wplp') . "\n\n"
+          . sprintf(__('User: %s', 'wplp'), $liked_user_name) . "\n"
+          . sprintf(__('Profile URL: %s', 'wplp'), $liked_user_profile) . "\n"
           . sprintf(__('Total likes: %d', 'wplp'), $total_likes) . "\n"
-          . $user_info . "\n"
+          . $liker_info . "\n"
           . sprintf(__('Time: %s', 'wplp'), wp_date('Y-m-d H:i:s')) . "\n";
 
     $headers = ["From: {$site_name} <no-reply@" . parse_url(home_url(), PHP_URL_HOST) . '>'];
@@ -453,36 +459,40 @@ function wplp_get_like_status_handler()
 {
     check_ajax_referer('wplp_like_nonce', 'nonce');
 
-    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
 
-    if ($post_id <= 0) {
-        wp_send_json_error(['message' => __('Invalid post', 'wplp')], 400);
+    if ($user_id <= 0) {
+        wp_send_json_error(['message' => __('Invalid user', 'wplp')], 400);
     }
 
     wp_send_json_success([
-        'likes' => wplp_get_like_count($post_id),
-        'has_liked' => wplp_has_user_liked($post_id),
+        'likes' => wplp_get_like_count($user_id),
+        'has_liked' => wplp_has_user_liked($user_id),
     ]);
 }
 
 /**
  * Render like button (use in template)
  */
-function wplp_render_like_button($post_id = null)
+function wplp_render_like_button($user_id = null)
 {
-    if (! $post_id) {
-        $post_id = get_the_ID();
+    if (! $user_id) {
+        $user_id = get_current_user_id();
     }
 
-    $likes = wplp_get_like_count($post_id);
-    $has_liked = wplp_has_user_liked($post_id);
+    if (! $user_id || ! get_userdata($user_id)) {
+        return;
+    }
+
+    $likes = wplp_get_like_count($user_id);
+    $has_liked = wplp_has_user_liked($user_id);
     $button_class = $has_liked ? 'wplp-like wplp-liked' : 'wplp-like';
     $button_text = $has_liked ? __('Liked', 'wplp') : __('Like', 'wplp');
 
     echo sprintf(
-        '<button class="%s" data-post-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></button>',
+        '<button class="%s" data-user-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></button>',
         esc_attr($button_class),
-        esc_attr($post_id),
+        esc_attr($user_id),
         esc_html($button_text),
         $likes
     );
@@ -490,29 +500,29 @@ function wplp_render_like_button($post_id = null)
 
 /**
  * Shortcode: Display like button
- * Usage: [wplp_like_button] or [wplp_like_button post_id="123"]
+ * Usage: [wplp_like_button] or [wplp_like_button user_id="123"]
  */
 function wplp_like_button_shortcode($atts)
 {
     $atts = shortcode_atts([
-        'post_id' => null,
+        'user_id' => null,
     ], $atts, 'wplp_like_button');
 
-    $post_id = ! empty($atts['post_id']) ? intval($atts['post_id']) : get_the_ID();
+    $user_id = ! empty($atts['user_id']) ? intval($atts['user_id']) : null;
 
-    if (! $post_id || get_post_status($post_id) === false) {
-        return '<p class="wplp-error">' . esc_html__('Invalid post ID', 'wplp') . '</p>';
+    if (! $user_id || ! get_userdata($user_id)) {
+        return '<p class="wplp-error">' . esc_html__('Invalid user ID', 'wplp') . '</p>';
     }
 
-    $likes = wplp_get_like_count($post_id);
-    $has_liked = wplp_has_user_liked($post_id);
+    $likes = wplp_get_like_count($user_id);
+    $has_liked = wplp_has_user_liked($user_id);
     $button_class = $has_liked ? 'wplp-like wplp-liked' : 'wplp-like';
     $button_text = $has_liked ? __('Liked', 'wplp') : __('Like', 'wplp');
 
     return sprintf(
-        '<button class="%s" data-post-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></button>',
+        '<a class="%s" data-user-id="%d"><span class="wplp-like-icon">❤️</span><span class="wplp-like-text">%s</span><span class="wplp-like-count">%d</span></a>',
         esc_attr($button_class),
-        esc_attr($post_id),
+        esc_attr($user_id),
         esc_html($button_text),
         $likes
     );
@@ -521,5 +531,5 @@ function wplp_like_button_shortcode($atts)
 add_shortcode('wplp_like_button', 'wplp_like_button_shortcode');
 
 add_action( 'um_members_after_user_name', function($user_id, $args){
-    wplp_render_like_button();
+    wplp_render_like_button($user_id);
 }, 10, 2 );

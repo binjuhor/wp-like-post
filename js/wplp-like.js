@@ -6,7 +6,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
 
         const $button = $(this);
-        const postId = $button.data('post-id');
+        const userId = $button.data('user-id');
 
         if ($button.hasClass('wplp-loading') || $button.hasClass('wplp-liked')) {
             return;
@@ -20,7 +20,7 @@ jQuery(document).ready(function ($) {
             data: {
                 action: 'wplp_send_like',
                 nonce: WPLP_AJAX.nonce,
-                post_id: postId,
+                user_id: userId,
             },
             success: function (response) {
                 if (response.success) {
@@ -59,9 +59,9 @@ jQuery(document).ready(function ($) {
     function initializeLikeButtons() {
         $('.wplp-like').each(function () {
             const $button = $(this);
-            const postId = $button.data('post-id');
+            const userId = $button.data('user-id');
 
-            if (!postId) {
+            if (!userId) {
                 return;
             }
 
@@ -71,7 +71,7 @@ jQuery(document).ready(function ($) {
                 data: {
                     action: 'wplp_get_like_status',
                     nonce: WPLP_AJAX.nonce,
-                    post_id: postId,
+                    user_id: userId,
                 },
                 success: function (response) {
                     if (response.success) {
