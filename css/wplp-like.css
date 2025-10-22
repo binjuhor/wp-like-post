@@ -17,6 +17,7 @@
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     outline: none;
     user-select: none;
+    text-decoration: none;
 }
 
 .wplp-like:hover {
